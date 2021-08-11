@@ -4,13 +4,13 @@ import "firebase/firestore";
 
 
 const firebaseConfig = {
-    apiKey: "AIzaSyC24qYjVPwXfYVY6urZ2TvR2zEN1IE6E0Q",
-    authDomain: "yacht-d950e.firebaseapp.com",
-    projectId: "yacht-d950e",
-    storageBucket: "yacht-d950e.appspot.com",
-    messagingSenderId: "119190672911",
-    appId: "1:119190672911:web:fc016d05661abe85bf357a"
-  };
+  apiKey: "AIzaSyBHj1FgZDQHDL1bnwNhlpI6fHrILEktFzk",
+  authDomain: "yacht-3d84f.firebaseapp.com",
+  projectId: "yacht-3d84f",
+  storageBucket: "yacht-3d84f.appspot.com",
+  messagingSenderId: "574985103623",
+  appId: "1:574985103623:web:97339ef1519ffb574dfda2"
+};
 
 if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);

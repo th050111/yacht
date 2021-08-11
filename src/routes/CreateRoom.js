@@ -3,48 +3,48 @@ import { Redirect } from "react-router-dom";
 import { dbService } from "../myBase";
 
 
-const CreateRoom = ({userObj,createComplete}) => {
+const CreateRoom = ({ userObj, createComplete }) => {
   const [roomName, setRoomName] = useState("");
-  const [isCreated,setIsCreated] = useState(false)
+  const [isCreated, setIsCreated] = useState(false)
   const [createNewRoom, setCreateNewRoom] = useState(false);
   const [error, setError] = useState("");
-    
-    const onChange = (event) => {
-        const { target: { name, value } } = event;
-        if (name === "roomName") {
-            setRoomName(value)
-        }
+
+  const onChange = (event) => {
+    const { target: { name, value } } = event;
+    if (name === "roomName") {
+      setRoomName(value)
     }
-    const onSubmit = async (event) => {
-        event.preventDefault();
-        const data =await checkEmpty();
-		  if(createNewRoom){
-if(data.data() != undefined){
-		  	alert("already exist");
-		  }
-		  else{
-		  	await dbService.collection("rooms").doc(`${roomName}`).set(
-				{
-					playerId: userObj.uid,
-					name: roomName,
-				}
-			);
-			setIsCreated(true);
-		  }
-		  } else  {
-		  if(data.data() != undefined){
-		  	setRoomName(data.data().name);
-			setIsCreated(true);
-		  }else{
-		  	alert("empty room!")
-		  }
-		  }
+  }
+  const onSubmit = async (event) => {
+    event.preventDefault();
+    const data = await checkEmpty();
+    if (createNewRoom) {
+      if (data.data() != undefined) {
+        alert("already exist");
+      }
+      else {
+        await dbService.collection("rooms").doc(`${roomName}`).set(
+          {
+            playerId: userObj.uid,
+            name: roomName,
+          }
+        );
+        setIsCreated(true);
+      }
+    } else {
+      if (data.data() != undefined) {
+        setRoomName(data.data().name);
+        setIsCreated(true);
+      } else {
+        alert("empty room!")
+      }
     }
+  }
 
   const checkEmpty = async () => {
     const data = await dbService.collection("rooms").doc(`${roomName}`).get();
-	 return data;
-  } 
+    return data;
+  }
   const toggleRoom = () => setCreateNewRoom((prev) => !prev);
   return (
     <div>
