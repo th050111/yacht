@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import { dbService } from "../myBase";
 
-const Twit = ({ chatObj, isOwner, dbChat}) => {
+const Twit = ({ chatObj}) => {
 
   return (
     <div>
