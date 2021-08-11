@@ -18,23 +18,42 @@ const CreateRoom = ({ userObj, createComplete }) => {
   const onSubmit = async (event) => {
     event.preventDefault();
     const data = await checkEmpty();
+    const dbRoom = dbService.collection("rooms").doc(`${roomName}`);
+    const dbGame = dbRoom.collection("game");
+    const dbChat = dbRoom.collection("chats");
+    const dbGameDocs = {
+      rule: dbGame.doc("rule"),
+      score: dbGame.doc("score"),
+    }
     if (createNewRoom) {
       if (data.data() != undefined) {
         alert("already exist");
       }
       else {
-        await dbService.collection("rooms").doc(`${roomName}`).set(
+        await dbRoom.set(
           {
             playerId: [userObj.uid],
             name: roomName,
           }
         );
+        await dbGameDocs.rule.set(
+          {
+            turn: 0,
+            round: 1,
+          }
+        )
+        await dbGameDocs.score.set(
+          {
+            soore: 0,
+          }
+        )
+        //await dbService.collection
         setIsCreated(true);
       }
     } else {
       if (data.data() != undefined) {
-			const idArray = [userObj.uid,...data.data().playerId];
-		  await dbService.collection("rooms").doc(`${roomName}`).set(
+        const idArray = [userObj.uid, ...data.data().playerId];
+        await dbRoom.set(
           {
             playerId: idArray,
             name: roomName,
