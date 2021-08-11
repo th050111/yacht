@@ -25,7 +25,7 @@ const CreateRoom = ({ userObj, createComplete }) => {
       else {
         await dbService.collection("rooms").doc(`${roomName}`).set(
           {
-            playerId: userObj.uid,
+            playerId: [userObj.uid],
             name: roomName,
           }
         );
@@ -33,6 +33,12 @@ const CreateRoom = ({ userObj, createComplete }) => {
       }
     } else {
       if (data.data() != undefined) {
+			const idArray = [userObj.uid,...data.data().playerId];
+		  await dbService.collection("rooms").doc(`${roomName}`).set(
+          {
+            playerId: idArray,
+            name: roomName,
+          })
         setRoomName(data.data().name);
         setIsCreated(true);
       } else {

@@ -3,7 +3,7 @@ import Play from "../components/Play";
 
 
 const Room = ({roomId}) => {
-  return <Play />
+  return <Play roomId={roomId}/>
 }
 
 export default Room;

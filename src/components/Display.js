@@ -11,7 +11,7 @@ const Display = ({dices, change, currentScore, confirmedScore, confirmBtn}) => {
 		<DisplayDice dices={dices} change={change} />
 		<br />
 		<DisplayScore currentScore={currentScore} confirmedScore={confirmedScore}
-        confirmBtn={confirm}
+        confirmBtn={confirmBtn}
       />
 		</div>
 	)

@@ -1,17 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import Display from './Display';
+import { dbService } from "../myBase";
 
-const Play = () => {
+
+const Play = ({roomId}) => {
   const [dices, setDices] = useState(Array(5).fill(0));
   const [bottomScore, setBottomScore] = useState([]);
   const [topScore, setTopScore] = useState([]);
   const [confirmedScore, setConfirmedScore] = useState(Array(12).fill(0));
   const [cntChange, setCntChange] = useState(0);
   const [round, setRound] = useState(1);
+  const [test, setTest] = useState();
 
   useEffect(() => {
+  	getTest();
     setScore();
   }, [])
+  useEffect(() => {
+  	console.log(test)
+    setScore();
+  }, [test])
+  
+  
+  const getTest = async () => {
+  	const testArray = await dbService.collection('chat').doc('WpN1lnvfMZgGkQLSTuS4').get();
+	setTest(testArray.data());
+  }
 
   const confirm = (index, score, name) => {
     console.log(index, score, name);
@@ -116,10 +130,8 @@ const Play = () => {
     <>
       <h3>Current Round: {round}</h3>
       <button onClick={() => setScore()}>set</button>
-      <DisplayDice dices={dices} change={setScore} />
-      <DisplayScore currentScore={{ topScore: topScore, bottomScore: bottomScore }} confirmedScore={confirmedScore}
-        confirmBtn={confirm}
-      />
+		<Display dices={dices} change={setScore} currentScore={{ topScore: topScore, bottomScore: bottomScore }} confirmedScore={confirmedScore}
+        confirmBtn={confirm}/>
     </>
   );
 }
