@@ -4,8 +4,17 @@ import Auth from "../routes/Auth";
 import CreateRoom from "../routes/CreateRoom";
 import Room from "../routes/Room";
 
+
+
 const AppRouter = ({ isLoggedIn, userObj }) => {
-  const [roomId, setRoomId] = useState("hi");
+  const [roomId, setRoomId] = useState("mmm");
+  const [isEnter, setIsEnter] = useState(false);
+  
+  const enterRoom = (roomName) => {
+  	setRoomId(roomName)
+	setIsEnter(true);
+  }
+  
   return (
     <Router>
       {/* isLoggedIn이 참이라면 뒤의 문장 실행 */}
@@ -13,11 +22,12 @@ const AppRouter = ({ isLoggedIn, userObj }) => {
         {isLoggedIn ? (
           <>
             <Route exact path="/">
-              <CreateRoom userObj={userObj} />
+              <CreateRoom userObj={userObj} createComplete={(roomName)=>{enterRoom(roomName)}}/>
             </Route>
-            <Route exact path="/profile">
-              <Room userObj={userObj} roomId={roomId}/>
+            <Route exact path={`/${roomId}`}>
+              <Room userObj={userObj} roomId={roomId} />
             </Route>
+				{isEnter ? <Redirect from="/" to={`${roomId}`} />:<Redirect from="*" to="/" />}
           </>) : (
             <>
               <Route exact path="/">

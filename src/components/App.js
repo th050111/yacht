@@ -14,7 +14,6 @@ function App() {
   useEffect(() => {
     //auth관련 변경 이벤트 리스너, 리스너 등록 직후 호출
     authService.onAuthStateChanged((user) => {
-	 	console.log(user)
       if(true){
         setIsLoggedIn(true);
         setUserObj(user);
