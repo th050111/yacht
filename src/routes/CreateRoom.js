@@ -34,12 +34,15 @@ const CreateRoom = ({ userObj, createComplete }) => {
           {
             playerId: [userObj.uid],
             name: roomName,
+				playerLimit: 2,
+				cntPlayer: 1,
           }
         );
         await dbGameDocs.rule.set(
           {
             turn: 0,
             round: 1,
+				isPlay: false,
           }
         )
         await dbGameDocs.score.set(
