@@ -11,6 +11,7 @@ const Play = ({ roomId, userObj}) => {
   const [cntChange, setCntChange] = useState(0);
   const [round, setRound] = useState(1);
   const [myTurn,setMyTurn] = useState(false);
+  const [totalScore,setTotalScore] = useState({topTotal:0, bottomTotal:0, bonus:0,total:0})
 
   const dbRoom = dbService.collection("rooms").doc(`${roomId}`);
   const dbGame = dbRoom.collection("game");
@@ -36,13 +37,36 @@ const Play = ({ roomId, userObj}) => {
 		}
 		}) 
   }, [])
+  
+  useEffect(async ()=>{
+	await dbGameDocs.score.update({
+     [userObj.uid]:{score: confirmedScore,
+     totalScore: totalScore,}
+   })
+  },[totalScore])
 
- 
+  const getTotal = (confirmedScore) => {
+    const score = {
+      bottomTotal:0,
+      topTotal:0,
+      total:0,
+    }
+    for(let i = 0; i < 6; i++){
+      score.topTotal += confirmedScore[i]
+    }
+    for(let i = 0; i < 6; i++){
+      score.bottomTotal += confirmedScore[i+6]
+    }
+    score.total = score.bottomTotal + score.topTotal;
+	  console.log(score)
+    setTotalScore(score);
+  }
 
   const confirm = async (index, score, name) => {
     const confirmArray = [...confirmedScore];
     confirmArray[index] = score;
-    setConfirmedScore(confirmArray);
+	 setConfirmedScore(confirmArray)
+    getTotal(confirmArray)
     setCntChange(0);
     setScore(Array(5).fill(true), 0);
     const ruleObj = await dbGameDocs.rule.get();
@@ -52,6 +76,7 @@ const Play = ({ roomId, userObj}) => {
 	 } else{
 	 	await dbGameDocs.rule.update({turn: ruleObj.data().turn+1});
 	 }
+   
   }
 
   const setScore = (isSelected = [true, true, true, true, true], cnt = 1) => {
@@ -148,6 +173,7 @@ const Play = ({ roomId, userObj}) => {
       <h3>Current Round: {round}</h3>
       <button onClick={() => setScore()}>set</button>
       <Display dices={dices} change={setScore} currentScore={{ topScore: topScore, bottomScore: bottomScore }} confirmedScore={confirmedScore}
+		totalScore={totalScore}
         confirmBtn={confirm} />
     </>) : (<div>otherTurn</div>)}
 	 </>

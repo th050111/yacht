@@ -5,13 +5,14 @@ import React, { useState, useEffect } from 'react';
 
 
 
-const Display = ({dices, change, currentScore, confirmedScore, confirmBtn}) => {
+const Display = ({dices, change, currentScore, confirmedScore, confirmBtn,totalScore}) => {
 	return (
 		<div>
 		<DisplayDice dices={dices} change={change} />
 		<br />
 		<DisplayScore currentScore={currentScore} confirmedScore={confirmedScore}
         confirmBtn={confirmBtn}
+		  totalScore={totalScore}
       />
 		</div>
 	)
@@ -40,7 +41,7 @@ const DisplayDice = ({ dices, change }) => {
 }
 
 
-const DisplayScore = ({ currentScore, confirmedScore, confirmBtn }) => {
+const DisplayScore = ({ currentScore, confirmedScore, confirmBtn ,totalScore}) => {
   const topScoreName = {
     0: "Aces",
     1: "Twos",
@@ -81,6 +82,9 @@ const DisplayScore = ({ currentScore, confirmedScore, confirmBtn }) => {
       <h3>confirmedScore</h3>
       {confirmedScore.map((score, index) => <div key={index}>{index <= 5 ? topScoreName[index] : bottomScoreName[index - 6]}: {score}</div>
       )}
+		<br />
+		<br />
+		<div>topTotal: {totalScore.topTotal}</div><div>bottomTotal: {totalScore.bottomTotal}</div><div>total: {totalScore.total}</div>
     </>
   );
 }
