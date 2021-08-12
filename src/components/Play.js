@@ -3,42 +3,58 @@ import Display from './Display';
 import { dbService } from "../myBase";
 
 
-const Play = ({ roomId }) => {
+const Play = ({ roomId, userObj}) => {
   const [dices, setDices] = useState(Array(5).fill(0));
   const [bottomScore, setBottomScore] = useState([]);
   const [topScore, setTopScore] = useState([]);
   const [confirmedScore, setConfirmedScore] = useState(Array(12).fill(0));
   const [cntChange, setCntChange] = useState(0);
   const [round, setRound] = useState(1);
-  const [test, setTest] = useState();
+  const [myTurn,setMyTurn] = useState(false);
 
-  useEffect(() => {
-    getTest();
-    setScore();
-  }, [])
-  useEffect(() => {
-    console.log(test)
-    setScore();
-  }, [test])
-
-
-  const getTest = async () => {
-    const testArray = await dbService.collection('chat').doc('WpN1lnvfMZgGkQLSTuS4').get();
-    setTest(testArray.data());
+  const dbRoom = dbService.collection("rooms").doc(`${roomId}`);
+  const dbGame = dbRoom.collection("game");
+  const dbChat = dbRoom.collection("chats");
+  const dbGameDocs = {
+    rule: dbGame.doc("rule"),
+    score: dbGame.doc("score"),
   }
 
-  const confirm = (index, score, name) => {
-    console.log(index, score, name);
+  useEffect(() => {
+    setScore();
+    dbGameDocs.rule.onSnapshot(async (snapshot) => {
+      const turn = snapshot.data().turn;
+      const round = snapshot.data().round;
+      const playerId = await dbRoom.get();
+		
+		setRound(round)
+		if(await playerId.data().playerId[turn] === userObj.uid){
+			//console.log("Your Turn!!")//3번출력, 버그수정 필요
+			setMyTurn(true);
+			}else{
+			setMyTurn(false);
+		}
+		}) 
+  }, [])
+
+ 
+
+  const confirm = async (index, score, name) => {
     const confirmArray = [...confirmedScore];
     confirmArray[index] = score;
     setConfirmedScore(confirmArray);
     setCntChange(0);
     setScore(Array(5).fill(true), 0);
-    setRound((prev) => prev + 1)
+    const ruleObj = await dbGameDocs.rule.get();
+	 console.log(await ruleObj.data())
+	 if(ruleObj.data().turn >= 1){
+	 	await dbGameDocs.rule.update({turn: 0, round: ruleObj.data().round+1});
+	 } else{
+	 	await dbGameDocs.rule.update({turn: ruleObj.data().turn+1});
+	 }
   }
 
   const setScore = (isSelected = [true, true, true, true, true], cnt = 1) => {
-    console.log(isSelected)
     if (cntChange >= 3 && cnt != 0)
       return;
     const currentDices = randomDice(isSelected);
@@ -57,7 +73,6 @@ const Play = ({ roomId }) => {
     })
     if (isChange) {
       setCntChange((prev) => (prev + 1))
-      console.log("hi");
     }
     return dices.map((dice, index) => isSelected[index] ? (Math.floor(Math.random() * 6) + 1) : dice
     );
@@ -127,12 +142,15 @@ const Play = ({ roomId }) => {
     return currentBottomScore;
   }
   return (
+  <>
+  {myTurn ?(
     <>
       <h3>Current Round: {round}</h3>
       <button onClick={() => setScore()}>set</button>
       <Display dices={dices} change={setScore} currentScore={{ topScore: topScore, bottomScore: bottomScore }} confirmedScore={confirmedScore}
         confirmBtn={confirm} />
-    </>
+    </>) : (<div>otherTurn</div>)}
+	 </>
   );
 }
 
