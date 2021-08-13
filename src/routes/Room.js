@@ -2,6 +2,8 @@ import { dbService } from "../myBase";
 import React, { useEffect, useState } from "react";
 import Play from "../components/Play";
 import Chat from "../components/Chat";
+import {Redirect} from "react-router-dom";
+
 
 const Room = ({ roomId, userObj }) => {
   const [isStart, setIsStart] = useState(false);
@@ -11,6 +13,7 @@ const Room = ({ roomId, userObj }) => {
   const [chats, setChats] = useState([]);
   const [isPlay, setIsPlay] = useState(false);
   const [gameEnd,setGameEnd] = useState(false);
+  const [leave,setLeave] = useState(false);
 
   const dbRoom = dbService.collection("rooms").doc(`${roomId}`);
   const dbGame = dbRoom.collection("game");
@@ -37,7 +40,22 @@ const Room = ({ roomId, userObj }) => {
         setIsPlay(true);
       }
     });
+	 return async () => {
+	 	leaveRoom();
+ 	 }
   }, [])
+  
+  const leaveRoom = async () => {
+  //if(event)
+  	const room = await dbRoom.get();
+		const playerArray = room.data().playerId;
+		const newArray = playerArray.filter((element) => element !==userObj.uid )
+		await dbRoom.update({playerId:newArray})
+		if(newArray.length === 0)
+		{
+			await dbRoom.delete();
+		}
+  }
 
   //twit이 submit 됐을 때
   const onSubmit = async (event) => {
@@ -63,9 +81,14 @@ const Room = ({ roomId, userObj }) => {
       await dbGameDocs.rule.update({isPlay: true});
     }
   }
+  
+  const onLeave = () => {
+	setLeave(true);
+  }
 
   return (
     <>
+	 {leave && <Redirect from="*" to="/"/>}
       <div>
         {isPlay ?
           (
@@ -93,6 +116,9 @@ const Room = ({ roomId, userObj }) => {
             <div>
               <button onClick={onStart}>start</button>
             </div>
+				<div>
+					<button onClick={onLeave}>leave</button>
+				</div>
             </>
           )
         }
