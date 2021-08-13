@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Display from './Display';
+import Result from './Result';
 import { dbService } from "../myBase";
 
 
@@ -12,6 +13,7 @@ const Play = ({ roomId, userObj}) => {
   const [round, setRound] = useState(1);
   const [myTurn,setMyTurn] = useState(false);
   const [totalScore,setTotalScore] = useState({topTotal:0, bottomTotal:0, bonus:0,total:0})
+	const [gameEnd,setGameEnd] = useState(false)
 
   const dbRoom = dbService.collection("rooms").doc(`${roomId}`);
   const dbGame = dbRoom.collection("game");
@@ -28,6 +30,12 @@ const Play = ({ roomId, userObj}) => {
       const round = snapshot.data().round;
       const playerId = await dbRoom.get();
 		
+		if(round > 12){
+			setGameEnd(true);
+			setMyTurn(false);
+			}
+		else
+		{
 		setRound(round)
 		if(await playerId.data().playerId[turn] === userObj.uid){
 			//console.log("Your Turn!!")//3번출력, 버그수정 필요
@@ -35,7 +43,8 @@ const Play = ({ roomId, userObj}) => {
 			}else{
 			setMyTurn(false);
 		}
-		}) 
+		}
+		})
   }, [])
   
   useEffect(async ()=>{
@@ -72,7 +81,7 @@ const Play = ({ roomId, userObj}) => {
     const ruleObj = await dbGameDocs.rule.get();
 	 console.log(await ruleObj.data())
 	 if(ruleObj.data().turn >= 1){
-	 	await dbGameDocs.rule.update({turn: 0, round: ruleObj.data().round+1});
+	 	    await dbGameDocs.rule.update({turn: 0, round: ruleObj.data().round+1});
 	 } else{
 	 	await dbGameDocs.rule.update({turn: ruleObj.data().turn+1});
 	 }
@@ -176,6 +185,7 @@ const Play = ({ roomId, userObj}) => {
 		totalScore={totalScore}
         confirmBtn={confirm} />
     </>) : (<div>otherTurn</div>)}
+	 {gameEnd && <div><Result roomId={roomId}/></div>}
 	 </>
   );
 }

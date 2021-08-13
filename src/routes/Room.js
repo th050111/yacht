@@ -10,6 +10,7 @@ const Room = ({ roomId, userObj }) => {
   //저장된 twit들
   const [chats, setChats] = useState([]);
   const [isPlay, setIsPlay] = useState(false);
+  const [gameEnd,setGameEnd] = useState(false);
 
   const dbRoom = dbService.collection("rooms").doc(`${roomId}`);
   const dbGame = dbRoom.collection("game");

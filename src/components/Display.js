@@ -60,12 +60,18 @@ const DisplayScore = ({ currentScore, confirmedScore, confirmBtn ,totalScore}) =
   }
   const onClickTop = (event, index) => {
     if (confirmedScore[index] != 0)
-      console.log("error");
+    {
+      alert("이미 고른 점수입니다!")
+      return;
+    }
     confirmBtn(index, currentScore.topScore[index], topScoreName[index]);
   }
   const onClickBottom = (event, index) => {
     if (confirmedScore[index + 6] != 0)
-      console.log("error");
+    {
+      alert("이미 고른 점수입니다!")
+      return;
+    }
     confirmBtn(index + 6, currentScore.bottomScore[index], bottomScoreName[index]);
   }
   return (
