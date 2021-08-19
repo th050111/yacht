@@ -9,11 +9,17 @@ import Room from "../routes/Room";
 const AppRouter = ({ isLoggedIn, userObj }) => {
   const [roomId, setRoomId] = useState("mmm");
   const [isEnter, setIsEnter] = useState(false);
+   const [loggedId,setLoggedId] = useState("")
   
   const enterRoom = (roomName) => {
   	setRoomId(roomName)
 	setIsEnter(true);
   }
+  
+  const leaveRoom =()=> setIsEnter(false)
+  
+  const loggedChange = (id) => setLoggedId(id)
+  
   
   return (
     <Router>
@@ -22,12 +28,15 @@ const AppRouter = ({ isLoggedIn, userObj }) => {
         {isLoggedIn ? (
           <>
             <Route exact path="/">
-              <CreateRoom userObj={userObj} createComplete={(roomName)=>{enterRoom(roomName)}}/>
+              <CreateRoom loggedChange={loggedChange} 
+				  loggedId={loggedId}
+				  userObj={userObj} createComplete={(roomName)=>{enterRoom(roomName)}}
+				  />
             </Route>
             <Route exact path={`/${roomId}`}>
-              <Room userObj={userObj} roomId={roomId} />
+              <Room userObj={userObj} roomId={roomId} leaveR={leaveRoom}/>
             </Route>
-				{isEnter ? <Redirect from="/" to={`${roomId}`} />:<Redirect from="*" to="/" />}
+				{isEnter ? <Redirect from="/" to={`/${roomId}`} />:<Redirect from="*" to="/" />}
           </>) : (
             <>
               <Route exact path="/">

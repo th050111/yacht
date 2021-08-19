@@ -1,0 +1,25 @@
+.ground {
+  height: 700px;
+  width: 1200px;
+  background-color: rgb(246, 247, 232);
+  
+  border: 10px solid black;
+
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+}
+
+
+.zoom {
+	position: fixed;
+
+
+	height: 30px;
+	width: 30px;
+	
+	background-color: red;
+	text-align: center;
+	line-height:30px;
+}
